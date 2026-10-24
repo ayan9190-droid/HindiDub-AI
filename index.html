@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HindiDub AI</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: Arial, sans-serif;
+      background: #101522;
+      color: white;
+      text-align: center;
+    }
+    main {
+      max-width: 650px;
+      margin: 60px auto;
+      padding: 30px;
+      background: #1c2638;
+      border: 1px solid #45516b;
+      border-radius: 18px;
+    }
+    h1 { color: #9baaff; }
+    input, button {
+      display: block;
+      width: 100%;
+      margin-top: 18px;
+      padding: 13px;
+      border-radius: 8px;
+    }
+    button {
+      border: 0;
+      background: #7889ff;
+      color: #101522;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #status { color: #c4cce0; overflow-wrap: anywhere; }
+    .note { font-size: 13px; color: #aeb9cf; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>🎙️ HindiDub AI</h1>
+    <h3>English Video → Hindi Voice</h3>
+    <p>Upload your video to get started.</p>
+
+    <input id="video" type="file" accept="video/mp4,video/*">
+    <button onclick="checkVideo()">Check Video</button>
+    <p id="status">Choose an English video (up to 10 minutes).</p>
+    <p class="note">
+      This is the first version. Hindi dubbing processing will be added next.
+    </p>
+  </main>
+
+  <script>
+    function checkVideo() {
+      const file = document.getElementById('video').files[0];
+      const status = document.getElementById('status');
+
+      if (!file) {
+        status.textContent = 'Please select a video first.';
+        return;
+      }
+
+      const url = URL.createObjectURL(file);
+      const video = document.createElement('video');
+      video.preload = 'metadata';
+
+      video.onloadedmetadata = function () {
+        const minutes = video.duration / 60;
+        status.textContent = file.name + ' — ' +
+          minutes.toFixed(1) + ' minutes selected. ' +
+          (minutes <= 10 ? 'Video length OK.' :
+          'Video is longer than 10 minutes.');
+        URL.revokeObjectURL(url);
+      };
+
+      video.onerror = function () {
+        status.textContent = 'Could not read this video. Try an MP4 file.';
+        URL.revokeObjectURL(url);
+      };
+
+      video.src = url;
+    }
+  </script>
+</body>
+</html>
